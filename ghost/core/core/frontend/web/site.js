@@ -89,10 +89,11 @@ module.exports = function setupSiteApp(routerConfig) {
         api
     });
 
+    siteApp.set('llmsService', llmsService);
+
     const llmsHandler = createLlmsHandler({
         llmsService,
         config,
-        urlServiceFacade: urlService.facade,
         settingsCache
     });
 
@@ -160,8 +161,6 @@ module.exports = function setupSiteApp(routerConfig) {
             return next();
         }
     });
-
-    llmsHandler.mountMarkdownRoutes(siteApp);
 
     siteApp.use(function memberPageViewMiddleware(req, res, next) {
         if (req.member) {
