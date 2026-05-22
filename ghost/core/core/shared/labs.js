@@ -53,7 +53,8 @@ const PRIVATE_FEATURES = [
     'pictureImageFormats',
     'smarterCounts',
     'commentsThreads',
-    'commentsPinning'
+    'commentsPinning',
+    'llmsTxt'
 ];
 
 module.exports.GA_KEYS = [...GA_FEATURES];
