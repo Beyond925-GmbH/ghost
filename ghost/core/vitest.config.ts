@@ -13,6 +13,13 @@ export default defineConfig({
         // no summary printed). `threads` tears workers down with
         // worker.terminate() and is unaffected; it's also faster here.
         pool: 'threads',
+        // Share one module registry across all the test files in a worker.
+        // This is the model mocha always used — it never isolated — and the
+        // suite's tests were written against it. Ghost's server modules are
+        // heavy; isolating each file cold-imports them 550 times over, which
+        // is ~10x slower. The DB lifecycle in vitest-setup.ts is written for
+        // this: the knex pool is shared per worker, not torn down per file.
+        isolate: false,
         env: {
             NODE_ENV: 'testing',
             WEBHOOK_SECRET: 'TEST_STRIPE_WEBHOOK_SECRET'
@@ -24,6 +31,8 @@ export default defineConfig({
             '**/node_modules/**'
         ],
         setupFiles: ['./test/utils/vitest-setup.ts'],
+        // Removes the per-worker session sqlite databases after the run.
+        globalSetup: ['./test/utils/vitest-global-setup.ts'],
         // Ghost's snapshot tests use @tryghost/jest-snapshot, which manages
         // its own `__snapshots__/*.snap` files. Point vitest's native
         // snapshot system at a separate (never-written) path so it doesn't
