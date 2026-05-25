@@ -1,4 +1,8 @@
-# Fallback image: apply Resend server patches onto official Ghost 6.
+# Resend-enabled Ghost 6 via server-side patches (PR #27806).
+FROM node:22-alpine AS resend-deps
+WORKDIR /deps
+RUN npm install resend@4 --omit=dev
+
 FROM ghost:6-alpine
 
 USER root
@@ -18,8 +22,9 @@ COPY patches/email-analytics-service-wrapper.js \
 COPY patches/email-suppression-list-service.js \
   /var/lib/ghost/current/core/server/services/email-suppression-list/service.js
 
-RUN chown -R node:node /var/lib/ghost/current/core/server && corepack enable
+COPY --from=resend-deps /deps/node_modules/resend \
+  /var/lib/ghost/current/core/node_modules/resend
+
+RUN chown -R node:node /var/lib/ghost/current/core/server /var/lib/ghost/current/core/node_modules/resend
 
 USER node
-WORKDIR /var/lib/ghost/current/core
-RUN npm install resend@4 --no-save --legacy-peer-deps
