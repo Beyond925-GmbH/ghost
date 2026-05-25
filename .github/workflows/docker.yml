@@ -3,7 +3,7 @@ name: Build and publish Ghost (Resend)
 on:
   push:
     branches: [main, beyond925-resend]
-    tags: ["v*+beyond925-resend*"]
+    tags: ["v*-beyond925-resend*"]
   workflow_dispatch:
 
 env:
