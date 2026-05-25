@@ -1,0 +1,27 @@
+# Fallback image: apply Resend server patches onto official Ghost 6.
+# Use when the full monorepo GHCR build is unavailable.
+FROM ghost:6-alpine
+
+USER root
+
+# Copy Resend bulk-email provider files from PR #27806 (server-side only).
+# Admin UI Resend card requires the full fork build; env vars work without it.
+COPY patches/core/server/services/email-service/bulk-email-provider-factory.js \
+  /var/lib/ghost/current/core/server/services/email-service/bulk-email-provider-factory.js
+COPY patches/core/server/services/email-service/resend-email-provider.js \
+  /var/lib/ghost/current/core/server/services/email-service/resend-email-provider.js
+COPY patches/core/server/services/lib/resend-client.js \
+  /var/lib/ghost/current/core/server/services/lib/resend-client.js
+COPY patches/core/server/services/email-analytics/email-analytics-provider-resend.js \
+  /var/lib/ghost/current/core/server/services/email-analytics/email-analytics-provider-resend.js
+COPY patches/email-service-wrapper.js \
+  /var/lib/ghost/current/core/server/services/email-service/email-service-wrapper.js
+COPY patches/email-analytics-service-wrapper.js \
+  /var/lib/ghost/current/core/server/services/email-analytics/email-analytics-service-wrapper.js
+COPY patches/email-suppression-list-service.js \
+  /var/lib/ghost/current/core/server/services/email-suppression-list/service.js
+
+WORKDIR /var/lib/ghost/current/core
+RUN npm install resend@4 --omit=dev --no-save
+
+USER node
