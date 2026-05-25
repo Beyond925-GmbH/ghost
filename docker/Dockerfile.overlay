@@ -22,4 +22,4 @@ RUN chown -R node:node /var/lib/ghost/current/core/server && corepack enable
 
 USER node
 WORKDIR /var/lib/ghost/current/core
-RUN pnpm add resend@4
+RUN npm install resend@4 --no-save --legacy-peer-deps
