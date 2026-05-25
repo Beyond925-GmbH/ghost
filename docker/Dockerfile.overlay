@@ -4,8 +4,6 @@ FROM ghost:6-alpine
 
 USER root
 
-# Copy Resend bulk-email provider files from PR #27806 (server-side only).
-# Admin UI Resend card requires the full fork build; env vars work without it.
 COPY patches/core/server/services/email-service/bulk-email-provider-factory.js \
   /var/lib/ghost/current/core/server/services/email-service/bulk-email-provider-factory.js
 COPY patches/core/server/services/email-service/resend-email-provider.js \
@@ -21,7 +19,8 @@ COPY patches/email-analytics-service-wrapper.js \
 COPY patches/email-suppression-list-service.js \
   /var/lib/ghost/current/core/server/services/email-suppression-list/service.js
 
-WORKDIR /var/lib/ghost/current/core
-RUN npm install resend@4 --omit=dev --no-save
+RUN chown -R node:node /var/lib/ghost/current/core/server
 
 USER node
+WORKDIR /var/lib/ghost/current
+RUN yarn add resend@4 --ignore-workspace-root-check
