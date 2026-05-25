@@ -1,5 +1,4 @@
 # Fallback image: apply Resend server patches onto official Ghost 6.
-# Use when the full monorepo GHCR build is unavailable.
 FROM ghost:6-alpine
 
 USER root
@@ -19,8 +18,8 @@ COPY patches/email-analytics-service-wrapper.js \
 COPY patches/email-suppression-list-service.js \
   /var/lib/ghost/current/core/server/services/email-suppression-list/service.js
 
-RUN chown -R node:node /var/lib/ghost/current/core/server
+RUN chown -R node:node /var/lib/ghost/current/core/server && corepack enable
 
 USER node
-WORKDIR /var/lib/ghost/current
-RUN yarn add resend@4 --ignore-workspace-root-check
+WORKDIR /var/lib/ghost/current/core
+RUN pnpm add resend@4
