@@ -46,7 +46,10 @@ jobs:
         run: pnpm --filter ghost archive
 
       - name: Prepare Docker build context
-        run: mv ghost/core/package/ /tmp/ghost-production/
+        run: |
+          mv ghost/core/package/ /tmp/ghost-production/
+          # Ghost 6+ may ship source theme instead of casper — make Dockerfile resilient
+          sed -i 's|cp -R content/themes/casper default/casper|([ -d content/themes/casper ] \&\& cp -R content/themes/casper default/casper \|\| [ -d content/themes/source ] \&\& cp -R content/themes/source default/casper)|' /tmp/ghost-production/Dockerfile.production
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
