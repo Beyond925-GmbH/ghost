@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: beyond925-gmbh/ghost
+  NODE_VERSION: "22"
+  HUSKY: "0"
 
 permissions:
   contents: read
@@ -19,26 +19,34 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
-      - name: Checkout fork
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
-
-      - name: Enable corepack
-        run: corepack enable
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build Ghost
-        run: pnpm build
-        env:
-          NODE_ENV: production
+      - name: Build production assets
+        run: |
+          PKG_VERSION=$(node -p "require('./ghost/core/package.json').version")
+          SHORT_SHA="${GITHUB_SHA:0:7}"
+          export GHOST_BUILD_VERSION="${PKG_VERSION}+${SHORT_SHA}"
+          echo "GHOST_BUILD_VERSION=${GHOST_BUILD_VERSION}" >> $GITHUB_ENV
+          pnpm build:production
+
+      - name: Build standalone distribution
+        run: pnpm --filter ghost archive
+
+      - name: Prepare Docker build context
+        run: mv ghost/core/package/ /tmp/ghost-production/
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -46,28 +54,22 @@ jobs:
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=raw,value=resend,enable={{is_default_branch}}
-            type=ref,event=tag
-            type=sha,prefix=
-
-      - name: Build and push
+      - name: Build and push full image
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: /tmp/ghost-production
           file: Dockerfile.production
           target: full
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: |
+            ghcr.io/beyond925-gmbh/ghost:resend
+            ghcr.io/beyond925-gmbh/ghost:${{ github.sha }}
+          build-args: |
+            NODE_VERSION=${{ env.NODE_VERSION }}
+            GHOST_BUILD_VERSION=${{ env.GHOST_BUILD_VERSION }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
