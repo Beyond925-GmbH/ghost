@@ -1,0 +1,77 @@
+name: Build and publish Ghost (Resend)
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*-beyond925-resend*"]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: "22"
+  HUSKY: "0"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build production assets
+        run: |
+          PKG_VERSION=$(node -p "require('./ghost/core/package.json').version")
+          SHORT_SHA="${GITHUB_SHA:0:7}"
+          export GHOST_BUILD_VERSION="${PKG_VERSION}+${SHORT_SHA}"
+          echo "GHOST_BUILD_VERSION=${GHOST_BUILD_VERSION}" >> $GITHUB_ENV
+          pnpm build:production
+
+      - name: Build standalone distribution
+        run: pnpm --filter ghost archive
+
+      - name: Prepare Docker build context
+        run: |
+          mv ghost/core/package/ /tmp/ghost-production/
+          sed -i 's|cp -R content/themes/casper default/casper|mkdir -p default \&\& ( [ -d content/themes/casper ] \&\& cp -R content/themes/casper default/casper \|\| [ -d content/themes/source ] \&\& cp -R content/themes/source default/casper \|\| true )|' Dockerfile.production
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push full image
+        uses: docker/build-push-action@v6
+        with:
+          context: /tmp/ghost-production
+          file: Dockerfile.production
+          target: full
+          push: true
+          tags: |
+            ghcr.io/beyond925-gmbh/ghost:resend
+            ghcr.io/beyond925-gmbh/ghost:sha-${{ github.sha }}
+          build-args: |
+            NODE_VERSION=${{ env.NODE_VERSION }}
+            GHOST_BUILD_VERSION=${{ env.GHOST_BUILD_VERSION }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

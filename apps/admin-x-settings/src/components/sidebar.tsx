@@ -223,7 +223,7 @@ const Sidebar: React.FC = () => {
                     {hasGiftSubscriptions && hasStripeEnabled && <NavItem icon='gift' keywords={membershipSearchKeywords.giftSubscriptions} navid='gift-subscriptions' title="Gift subscriptions" onClick={handleSectionClick} />}
                     {!hasAutomations && <NavItem icon='mailplus' keywords={membershipSearchKeywords.memberEmails} navid='memberemails' title="Welcome emails" onClick={handleSectionClick} />}
                     {hasTipsAndDonations && hasStripeEnabled && <NavItem icon='piggybank' keywords={membershipSearchKeywords.tips} navid='tips-and-donations' title="Tips & donations" onClick={handleSectionClick} />}
-                    <NavItem icon='email' keywords={emailSearchKeywords.newslettersNavMenu} navid={['enable-newsletters', 'default-recipients', 'newsletters', 'mailgun']} title="Newsletters" onClick={handleSectionClick} />
+                    <NavItem icon='email' keywords={emailSearchKeywords.newslettersNavMenu} navid={['enable-newsletters', 'default-recipients', 'newsletters', 'mailgun', 'resend']} title="Newsletters" onClick={handleSectionClick} />
                 </SettingNavSection>
 
                 {/* Growth */}

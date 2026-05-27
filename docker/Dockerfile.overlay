@@ -1,0 +1,30 @@
+# Resend-enabled Ghost 6 via server-side patches (PR #27806).
+FROM node:22-alpine AS resend-deps
+WORKDIR /deps
+RUN npm install resend@4 --omit=dev
+
+FROM ghost:6-alpine
+
+USER root
+
+COPY patches/core/server/services/email-service/bulk-email-provider-factory.js \
+  /var/lib/ghost/current/core/server/services/email-service/bulk-email-provider-factory.js
+COPY patches/core/server/services/email-service/resend-email-provider.js \
+  /var/lib/ghost/current/core/server/services/email-service/resend-email-provider.js
+COPY patches/core/server/services/lib/resend-client.js \
+  /var/lib/ghost/current/core/server/services/lib/resend-client.js
+COPY patches/core/server/services/email-analytics/email-analytics-provider-resend.js \
+  /var/lib/ghost/current/core/server/services/email-analytics/email-analytics-provider-resend.js
+COPY patches/email-service-wrapper.js \
+  /var/lib/ghost/current/core/server/services/email-service/email-service-wrapper.js
+COPY patches/email-analytics-service-wrapper.js \
+  /var/lib/ghost/current/core/server/services/email-analytics/email-analytics-service-wrapper.js
+COPY patches/email-suppression-list-service.js \
+  /var/lib/ghost/current/core/server/services/email-suppression-list/service.js
+
+COPY --from=resend-deps /deps/node_modules/resend \
+  /var/lib/ghost/current/core/node_modules/resend
+
+RUN chown -R node:node /var/lib/ghost/current/core/server /var/lib/ghost/current/core/node_modules/resend
+
+USER node

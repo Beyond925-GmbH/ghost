@@ -3,6 +3,7 @@ import EnableNewsletters from './enable-newsletters';
 import MailGun from './mailgun';
 import Newsletters from './newsletters';
 import React from 'react';
+import Resend from './resend';
 import SearchableSection from '../../searchable-section';
 import {getSettingValues} from '@tryghost/admin-x-framework/api/settings';
 import {useGlobalData} from '../../providers/global-data-provider';
@@ -12,7 +13,8 @@ export const searchKeywords = {
     newsletters: ['newsletters', 'emails', 'design', 'customization'],
     defaultRecipients: ['newsletters', 'default recipients', 'emails'],
     mailgun: ['mailgun', 'emails', 'newsletters'],
-    newslettersNavMenu: ['emails', 'newsletters', 'newsletter sending', 'enable', 'disable', 'turn on', 'turn off', 'design', 'customization', 'default recipients', 'mailgun', 'tips', 'donations', 'one time', 'payment']
+    resend: ['resend', 'emails', 'newsletters'],
+    newslettersNavMenu: ['emails', 'newsletters', 'newsletter sending', 'enable', 'disable', 'turn on', 'turn off', 'design', 'customization', 'default recipients', 'mailgun', 'resend', 'tips', 'donations', 'one time', 'payment']
 };
 
 const EmailSettings: React.FC = () => {
@@ -26,6 +28,7 @@ const EmailSettings: React.FC = () => {
                 <>
                     <DefaultRecipients keywords={searchKeywords.defaultRecipients} />
                     <Newsletters keywords={searchKeywords.newsletters} />
+                    {!config.resendIsConfigured && <Resend keywords={searchKeywords.resend} />}
                     {!config.mailgunIsConfigured && <MailGun keywords={searchKeywords.mailgun} />}
                 </>
             )}
