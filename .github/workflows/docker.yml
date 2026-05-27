@@ -69,7 +69,7 @@ jobs:
           push: true
           tags: |
             ghcr.io/beyond925-gmbh/ghost:resend
-            ghcr.io/beyond925-gmbh/ghost:${{ github.sha }}
+            ghcr.io/beyond925-gmbh/ghost:sha-${{ github.sha }}
           build-args: |
             NODE_VERSION=${{ env.NODE_VERSION }}
             GHOST_BUILD_VERSION=${{ env.GHOST_BUILD_VERSION }}
