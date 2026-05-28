@@ -28,7 +28,7 @@ RUN corepack enable
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY components ./components
 
-RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=pnpm-store \
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=s/3edfda31-ec28-47d5-a92b-b1a0af19ca56-pnpm-store \
     apt-get update && \
     apt-get install -y --no-install-recommends build-essential python3 && \
     pnpm install --ignore-scripts --prod --prefer-offline && \
