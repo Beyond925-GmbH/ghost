@@ -1,16 +1,31 @@
 # syntax=docker/dockerfile:1-labs@sha256:7d49dad25a050e14338ba7028b0460243f9d911dedc160a8fe20c34738fef3af
 
-# Production Dockerfile for Ghost
-# Two targets:
-#   core — server + production deps, no admin (Ghost-Pro base)
-#   full — core + built admin (self-hosting)
-#
-# Build context: extracted `npm pack` output from ghost/core
+# Railway builds from the monorepo root, while Dockerfile.production expects
+# the packaged ghost/core output. This file runs that packaging step first.
 
 ARG NODE_VERSION=22.18.0
 
-# ---- Core: server + production deps ----
-FROM node:$NODE_VERSION-bookworm-slim AS core
+FROM node:$NODE_VERSION-bookworm-slim AS builder
+
+ENV HUSKY=0
+WORKDIR /repo
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends build-essential ca-certificates git python3 && \
+    rm -rf /var/lib/apt/lists/* && \
+    corepack enable
+
+COPY . .
+
+ARG GHOST_BUILD_VERSION=""
+ENV GHOST_BUILD_VERSION=${GHOST_BUILD_VERSION}
+
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=s/3edfda31-ec28-47d5-a92b-b1a0af19ca56-pnpm-build-store \
+    pnpm install --frozen-lockfile && \
+    pnpm build:production && \
+    pnpm --filter ghost archive
+
+FROM node:$NODE_VERSION-bookworm-slim AS runtime
 
 ENV NODE_ENV=production
 
@@ -25,8 +40,8 @@ WORKDIR /home/ghost
 
 RUN corepack enable
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY components ./components
+COPY --from=builder /repo/ghost/core/package/package.json /repo/ghost/core/package/pnpm-lock.yaml /repo/ghost/core/package/pnpm-workspace.yaml ./
+COPY --from=builder /repo/ghost/core/package/components ./components
 
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=s/3edfda31-ec28-47d5-a92b-b1a0af19ca56-pnpm-store \
     apt-get update && \
@@ -37,7 +52,7 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=s/3edfda31-ec28-4
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
 
-COPY --exclude=core/built/admin . .
+COPY --from=builder /repo/ghost/core/package ./
 
 RUN mkdir -p default log && \
     cp -R content base_content && \
@@ -56,11 +71,3 @@ ENV LD_PRELOAD=libjemalloc.so.2
 EXPOSE 2368
 
 CMD ["node", "index.js"]
-
-# ---- Full: core + admin ----
-FROM core AS full
-
-USER root
-COPY core/built/admin core/built/admin
-RUN chown -R nobody:nogroup core/built/admin
-USER ghost

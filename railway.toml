@@ -2,4 +2,4 @@
 
 [build]
 builder = "DOCKERFILE"
-dockerfilePath = "Dockerfile.production"
+dockerfilePath = "Dockerfile.railway"
