@@ -1,9 +1,10 @@
 # syntax=docker/dockerfile:1-labs@sha256:7d49dad25a050e14338ba7028b0460243f9d911dedc160a8fe20c34738fef3af
 
 # Production Dockerfile for Ghost
-# Two targets:
+# Targets:
 #   core — server + production deps, no admin (Ghost-Pro base)
 #   full — core + built admin (self-hosting)
+#   railway — default Railway build, equivalent to core
 #
 # Build context: extracted `npm pack` output from ghost/core
 
@@ -64,3 +65,7 @@ USER root
 COPY core/built/admin core/built/admin
 RUN chown -R nobody:nogroup core/built/admin
 USER ghost
+
+# Railway does not support selecting Dockerfile targets. Keep the default build
+# on the core image so Railway does not require a prebuilt admin bundle.
+FROM core AS railway
