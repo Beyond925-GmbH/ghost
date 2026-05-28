@@ -20,6 +20,23 @@ COPY . .
 ARG GHOST_BUILD_VERSION=""
 ENV GHOST_BUILD_VERSION=${GHOST_BUILD_VERSION}
 
+RUN if [ ! -f ghost/core/content/themes/casper/package.json ]; then \
+        rm -rf ghost/core/content/themes/casper && \
+        git init ghost/core/content/themes/casper && \
+        git -C ghost/core/content/themes/casper remote add origin https://github.com/TryGhost/Casper.git && \
+        git -C ghost/core/content/themes/casper fetch --depth 1 origin 01df665636b98a39aa808ebeb91ea40d216a121b && \
+        git -C ghost/core/content/themes/casper checkout FETCH_HEAD && \
+        rm -rf ghost/core/content/themes/casper/.git; \
+    fi && \
+    if [ ! -f ghost/core/content/themes/source/package.json ]; then \
+        rm -rf ghost/core/content/themes/source && \
+        git init ghost/core/content/themes/source && \
+        git -C ghost/core/content/themes/source remote add origin https://github.com/TryGhost/Source.git && \
+        git -C ghost/core/content/themes/source fetch --depth 1 origin 75f5210c471e9cf41b9c18c183649833d5ee14f5 && \
+        git -C ghost/core/content/themes/source checkout FETCH_HEAD && \
+        rm -rf ghost/core/content/themes/source/.git; \
+    fi
+
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=s/3edfda31-ec28-47d5-a92b-b1a0af19ca56-pnpm-build-store \
     pnpm install --frozen-lockfile && \
     pnpm build:production && \
