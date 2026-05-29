@@ -21,7 +21,13 @@ Railway checks image tags periodically, so a pushed `:resend` image can take a f
 
 ## 3. HubSpot bridge (cron sync)
 
-Deploy from [Beyond925-GmbH/hubspot-bridge](https://github.com/Beyond925-GmbH/hubspot-bridge) (`Dockerfile` + `railway.toml`).
+Deploy from [Beyond925-GmbH/hubspot-bridge](https://github.com/Beyond925-GmbH/hubspot-bridge) (`Dockerfile` + `railway.toml` with `cronSchedule = "*/15 * * * *"`).
+
+```bash
+cd hubspot-bridge
+railway link   # ghost-newsletter → hubspot-bridge service
+railway up
+```
 
 Or run locally before sends: `pnpm sync run`
 

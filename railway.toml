@@ -1,4 +1,8 @@
 # syntax=docker/dockerfile:1
+#
+# Ghost monorepo Railway build (Dockerfile.railway). Production Ghost should use
+# the prebuilt GHCR image (ghcr.io/beyond925-gmbh/ghost:resend) — see railway/README.md.
+# HubSpot bridge cron deploys from the separate hubspot-bridge repo, not this file.
 
 [build]
 builder = "DOCKERFILE"
