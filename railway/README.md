@@ -12,16 +12,20 @@ Deploy three services in one Railway project.
 1. **+ New → Docker Image** → `ghcr.io/beyond925-gmbh/ghost:resend`
 2. **Make GHCR package public** (GitHub → Packages → `ghost` → Package settings → Change visibility) so Railway can pull without Pro/private registry credentials
 3. **Settings → Source → Configure Auto Updates** → watch `:resend`; use **Anytime** unless you want a maintenance window
-4. **Settings → Volume** → mount `/var/lib/ghost/content`
+4. **Settings → Volume** → mount `/home/ghost/content`
 5. **Variables** — copy from [`ghost.env.example`](./ghost.env.example), wire MySQL refs
 6. **Networking** → generate domain, set `url=https://<your-domain>`
 7. Open `/ghost`, finish setup, create Custom Integration → Admin API key
 
 Railway checks image tags periodically, so a pushed `:resend` image can take a few hours to redeploy. If that delay becomes annoying, add a GitHub Actions step that runs `railway redeploy --service <ghost-service-id>` after the image push.
 
+### Crash troubleshooting
+
+If the Ghost container exits with `RotatingFileStream` errors such as `ENOENT: no such file or directory, rename ...production.log.N`, verify the service uses the logging variables in [`ghost.env.example`](./ghost.env.example). Railway captures stdout/stderr, so Ghost should not use production rotating file logs in this deployment. Repeated `NotFoundError: Page not found` lines are usually 404 noise from probes, bots, or stale URLs; investigate them separately only if a specific route should exist.
+
 ## 3. HubSpot bridge (cron sync)
 
-Deploy from [Beyond925-GmbH/hubspot-bridge](https://github.com/Beyond925-GmbH/hubspot-bridge) (`Dockerfile` + `railway.toml` with `cronSchedule = "*/15 * * * *"`).
+Deploy from [Beyond925-GmbH/hubspot-bridge](https://github.com/Beyond925-GmbH/hubspot-bridge) (`Dockerfile` + `railway.toml` with bi-hourly cron, 07:00–20:00 Europe/Berlin).
 
 ```bash
 cd hubspot-bridge
