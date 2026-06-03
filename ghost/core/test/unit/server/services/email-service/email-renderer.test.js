@@ -2459,6 +2459,27 @@ describe('Email renderer', function () {
 
             assert.ok(response.plaintext.includes('Author/Name O\'Brien & Co.'), 'Plaintext should fully decode to raw characters');
         });
+
+        it('decodes German characters in post HTML instead of leaving hex entities', async function () {
+            renderedPost = '<p>&#xC4;</p><p>&#xE4;</p><p>&#xD6;</p><p>&#xF6;</p><p>&#xDC;</p><p>&#xFC;</p><p>&#xDF;</p><p>qwwweeeertzuiop&#xFC;+asdfghjkl&#xF6;&#xE4;</p>';
+            const post = createModel(basePost);
+            const newsletter = createModel({
+                header_image: null,
+                name: 'Test Newsletter',
+                show_badge: false,
+                feedback_enabled: false,
+                show_share_button: false,
+                show_post_title_section: false
+            });
+
+            const response = await emailRenderer.renderBody(post, newsletter, null, {});
+
+            assert.equal(response.html.includes('&#xC4;'), false, 'HTML should not contain hex entity for Ä');
+            assert.ok(response.html.includes('Ä'), 'HTML should contain UTF-8 Ä');
+            assert.ok(response.html.includes('qwwweeeertzuiopü+asdfghjklöä'), 'HTML should contain UTF-8 keyboard line');
+            assert.ok(response.plaintext.includes('Ä'));
+            assert.equal(response.plaintext.includes('&#xC4;'), false, 'Plaintext should not contain hex entities');
+        });
     });
 
     describe('getTemplateData', function () {
@@ -3789,7 +3810,7 @@ describe('Email renderer', function () {
             assert(!response.html.includes('members only section'));
             assert(response.html.includes('some text for both'));
             assert(!response.html.includes('finishing part only for members'));
-            assert(response.html.includes('Devenez un(e) abonn&#xE9;(e) payant de Cathy&#39;s Blog pour acc&#xE9;der &#xE0; du contenu exclusif'));
+            assert(response.html.includes('Devenez un(e) abonné(e) payant de Cathy&#39;s Blog pour accéder à du contenu exclusif'));
             assert(response.plaintext.includes('Devenez un(e) abonné(e) payant de Cathy\'s Blog pour accéder à du contenu exclusif'));
         });
     });

@@ -1,6 +1,7 @@
 const cheerio = require('cheerio');
 const juice = require('juice');
 const htmlToPlaintext = require('@tryghost/html-to-plaintext');
+const {decodeNumericHtmlEntities} = require('./decode-numeric-html-entities');
 
 /**
  * @param {string} html
@@ -26,6 +27,7 @@ const finalizeHtml = (html) => {
 
     // Fix characters unsupported in some Outlook versions.
     html = $.html();
+    html = decodeNumericHtmlEntities(html);
     html = html.replace(/&apos;/g, '&#39;');
     html = html.replace(/→/g, '&rarr;');
     html = html.replace(/–/g, '&ndash;');

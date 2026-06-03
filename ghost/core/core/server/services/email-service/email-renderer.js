@@ -13,6 +13,7 @@ function isUnsplashImage(url) {
 }
 const {DateTime} = require('luxon');
 const htmlToPlaintext = require('@tryghost/html-to-plaintext');
+const {decodeNumericHtmlEntities} = require('../email-rendering/decode-numeric-html-entities');
 const EmailAddressParser = require('../email-address/email-address-parser');
 const {getEmailDesign} = require('../email-rendering/email-design');
 const {registerHelpers} = require('./helpers/register-helpers');
@@ -566,6 +567,10 @@ class EmailRenderer {
         const replacementDefinitions = this.buildReplacementDefinitions({html, newsletterUuid: newsletter.get('uuid')});
 
         // TODO: normalizeReplacementStrings (replace unsupported replacement strings)
+
+        // Cheerio encodes non-ASCII as hex entities (&#xC4;) which some email
+        // clients render literally. Decode to UTF-8 before generating plaintext.
+        html = decodeNumericHtmlEntities(html);
 
         // Convert HTML to plaintext
         const plaintext = htmlToPlaintext.email(html);
