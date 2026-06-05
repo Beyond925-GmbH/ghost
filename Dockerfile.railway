@@ -35,6 +35,14 @@ RUN if [ ! -f ghost/core/content/themes/casper/package.json ]; then \
         git -C ghost/core/content/themes/source fetch --depth 1 origin 75f5210c471e9cf41b9c18c183649833d5ee14f5 && \
         git -C ghost/core/content/themes/source checkout FETCH_HEAD && \
         rm -rf ghost/core/content/themes/source/.git; \
+    fi && \
+    if [ ! -f ghost/core/content/themes/wave/package.json ]; then \
+        rm -rf ghost/core/content/themes/wave && \
+        git init ghost/core/content/themes/wave && \
+        git -C ghost/core/content/themes/wave remote add origin https://github.com/TryGhost/Wave.git && \
+        git -C ghost/core/content/themes/wave fetch --depth 1 origin 4cec6a894619b5644f2b9d74554d40c83d18e85c && \
+        git -C ghost/core/content/themes/wave checkout FETCH_HEAD && \
+        rm -rf ghost/core/content/themes/wave/.git; \
     fi
 
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=s/3edfda31-ec28-47d5-a92b-b1a0af19ca56-pnpm-build-store \
@@ -70,6 +78,12 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=s/3edfda31-ec28-4
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /repo/ghost/core/package ./
+
+# Install the S3-compatible storage adapter (used for Cloudflare R2) into the
+# image's node_modules. The committed shim at content/adapters/storage/s3
+# re-exports this package, so image storage never depends on the volume.
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=s/3edfda31-ec28-47d5-a92b-b1a0af19ca56-pnpm-store \
+    npm install --no-save --omit=dev ghost-storage-adapter-s3@latest
 
 COPY railway/docker-entrypoint.sh /home/ghost/docker-entrypoint.sh
 COPY railway/scripts /home/ghost/scripts
