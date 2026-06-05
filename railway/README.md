@@ -17,7 +17,7 @@ Deploy three services in one Railway project.
 6. **Networking** → generate domain, set `url=https://<your-domain>` (must match the browser URL exactly, e.g. `https://news.beyond925.de`)
 7. Open `/ghost`, finish setup, create Custom Integration → Admin API key
 
-The image seeds an empty content volume from `base_content/` on startup (see [`docker-entrypoint.sh`](./docker-entrypoint.sh)). The bundled themes (`casper`, `source`, `wave`) and the `s3` storage adapter are baked into the image, so they are restored automatically on every boot — even on a wiped or recreated volume. Uploaded images are stored in a **Railway Bucket** (see [Image storage (Railway Bucket)](#image-storage-railway-bucket)), so they live outside the volume entirely and survive any redeploy. Nothing irreplaceable depends on the content volume anymore.
+The image seeds an empty content volume from `base_content/` on startup (see [`docker-entrypoint.sh`](./docker-entrypoint.sh)). The bundled themes (`casper`, `source`, `wave`, `solo`) and the `s3` storage adapter are baked into the image, so they are restored automatically on every boot — even on a wiped or recreated volume. Uploaded images are stored in a **Railway Bucket** (see [Image storage (Railway Bucket)](#image-storage-railway-bucket)), so they live outside the volume entirely and survive any redeploy. Nothing irreplaceable depends on the content volume anymore.
 
 Railway checks image tags periodically, so a pushed `:resend` image can take a few hours to redeploy. If that delay becomes annoying, add a GitHub Actions step that runs `railway redeploy --service <ghost-service-id>` after the image push.
 
@@ -52,14 +52,14 @@ Symptoms: `active theme "…" is missing`, `ENOENT: scandir '/home/ghost/content
 
 **Cause:** Railway volumes mount at runtime and overlay the image's baked `content/` directory. A freshly created/empty volume therefore hides the baked themes and adapters until they are seeded. (Images are unaffected now that they live in the Railway Bucket.)
 
-**Automatic fix (current images):** On boot, the entrypoint seeds `base_content/` → `content/` when `content/themes/` is empty, and additionally self-heals existing volumes by restoring the bundled adapters and any missing bundled themes (`casper`, `source`, `wave`) — never deleting user data.
+**Automatic fix (current images):** On boot, the entrypoint seeds `base_content/` → `content/` when `content/themes/` is empty, and additionally self-heals existing volumes by restoring the bundled adapters and any missing bundled themes (`casper`, `source`, `wave`, `solo`) — never deleting user data.
 
 **Manual fix (force a reseed):**
 
 ```bash
 # Railway Ghost service shell
 cp -a /home/ghost/base_content/. /home/ghost/content/
-ls /home/ghost/content/themes/             # expect casper, source, wave
+ls /home/ghost/content/themes/             # expect casper, source, wave, solo
 ls /home/ghost/content/adapters/storage/   # expect s3
 ```
 
@@ -73,7 +73,7 @@ Symptoms: `POST /ghost/api/admin/session` hangs 20–125s then client aborts (49
 
 1. Set `security__staffDeviceVerification=false` in Railway and redeploy.
 2. Reset password via shell (see below) — logs show `PASSWORD_INCORRECT` when the password is wrong.
-3. Themes (`casper`, `source`, `wave`) are bundled and self-healed on boot, so `active_theme` no longer needs a fallback. If a theme dir is somehow missing, force a reseed (see [Content volume troubleshooting](#content-volume-troubleshooting)).
+3. Themes (`casper`, `source`, `wave`, `solo`) are bundled and self-healed on boot, so `active_theme` no longer needs a fallback. If a theme dir is somehow missing, force a reseed (see [Content volume troubleshooting](#content-volume-troubleshooting)).
 
 ```bash
 # Railway Ghost service shell (works on current image via one-liner, or after redeploy via script)
@@ -134,7 +134,7 @@ Script source: [`scripts/reset-admin-password.js`](./scripts/reset-admin-passwor
 ### Post-deploy smoke test
 
 - [ ] Logs show `[entrypoint] Content volume seeded` or `already has themes`
-- [ ] `content/themes/` contains `casper`, `source`, and `wave`
+- [ ] `content/themes/` contains `casper`, `source`, `wave`, and `solo`
 - [ ] `content/adapters/storage/` contains `s3`
 - [ ] Admin login works in a private/incognito window
 - [ ] Upload a test image — its URL points at the `assetHost` domain and the object appears in the Railway Bucket

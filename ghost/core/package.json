@@ -36,6 +36,8 @@
     "!content/themes/source/pnpm-lock.yaml",
     "content/themes/wave/",
     "!content/themes/wave/pnpm-lock.yaml",
+    "content/themes/solo/",
+    "!content/themes/solo/pnpm-lock.yaml",
     "bin/",
     "types/",
     "index.js",

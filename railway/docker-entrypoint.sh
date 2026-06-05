@@ -30,7 +30,7 @@ if [ -d "${SEED_DIR}/adapters" ]; then
     cp -a "${SEED_DIR}/adapters/." "${ADAPTERS_DIR}/"
 fi
 
-for theme in casper source wave; do
+for theme in casper source wave solo; do
     if [ -d "${SEED_DIR}/themes/${theme}" ] && [ ! -d "${THEMES_DIR}/${theme}" ]; then
         echo "[entrypoint] Restoring missing bundled theme: ${theme}"
         mkdir -p "${THEMES_DIR}"

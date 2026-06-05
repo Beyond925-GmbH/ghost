@@ -43,6 +43,14 @@ RUN if [ ! -f ghost/core/content/themes/casper/package.json ]; then \
         git -C ghost/core/content/themes/wave fetch --depth 1 origin 4cec6a894619b5644f2b9d74554d40c83d18e85c && \
         git -C ghost/core/content/themes/wave checkout FETCH_HEAD && \
         rm -rf ghost/core/content/themes/wave/.git; \
+    fi && \
+    if [ ! -f ghost/core/content/themes/solo/package.json ]; then \
+        rm -rf ghost/core/content/themes/solo && \
+        git init ghost/core/content/themes/solo && \
+        git -C ghost/core/content/themes/solo remote add origin https://github.com/TryGhost/Solo.git && \
+        git -C ghost/core/content/themes/solo fetch --depth 1 origin b84329d525970edd0c0f185f402c3862536cdf3a && \
+        git -C ghost/core/content/themes/solo checkout FETCH_HEAD && \
+        rm -rf ghost/core/content/themes/solo/.git; \
     fi
 
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=s/3edfda31-ec28-47d5-a92b-b1a0af19ca56-pnpm-build-store \
