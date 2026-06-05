@@ -79,11 +79,16 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=s/3edfda31-ec28-4
 
 COPY --from=builder /repo/ghost/core/package ./
 
-# Install the S3-compatible storage adapter (used for Cloudflare R2) into the
-# image's node_modules. The committed shim at content/adapters/storage/s3
-# re-exports this package, so image storage never depends on the volume.
-RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=s/3edfda31-ec28-47d5-a92b-b1a0af19ca56-pnpm-store \
-    npm install --no-save --omit=dev ghost-storage-adapter-s3@latest
+# Install the S3-compatible storage adapter (used for Railway Bucket / R2) into
+# an isolated directory. It must NOT be installed in the Ghost package dir: npm
+# crashes ("Cannot read properties of null") trying to parse Ghost's pnpm
+# workspace + catalog: lockfile context. The committed shim at
+# content/adapters/storage/s3 resolves the package from here, so image storage
+# never depends on the volume.
+RUN mkdir -p /home/ghost/storage-adapters && \
+    cd /home/ghost/storage-adapters && \
+    npm init -y >/dev/null 2>&1 && \
+    npm install --omit=dev ghost-storage-adapter-s3@latest
 
 COPY railway/docker-entrypoint.sh /home/ghost/docker-entrypoint.sh
 COPY railway/scripts /home/ghost/scripts
