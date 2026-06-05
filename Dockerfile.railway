@@ -71,13 +71,17 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=s/3edfda31-ec28-4
 
 COPY --from=builder /repo/ghost/core/package ./
 
+COPY railway/docker-entrypoint.sh /home/ghost/docker-entrypoint.sh
+COPY railway/scripts /home/ghost/scripts
+
 RUN mkdir -p default log && \
     cp -R content base_content && \
     cp -R content/themes/casper default/casper && \
     ([ -d content/themes/source ] && cp -R content/themes/source default/source || true) && \
+    chmod +x /home/ghost/docker-entrypoint.sh && \
     chown ghost:ghost /home/ghost && \
     chown -R nobody:nogroup /home/ghost/* && \
-    chown -R ghost:ghost /home/ghost/content /home/ghost/log
+    chown -R ghost:ghost /home/ghost/content /home/ghost/log /home/ghost/docker-entrypoint.sh /home/ghost/scripts
 
 ARG GHOST_BUILD_VERSION=""
 ENV GHOST_BUILD_VERSION=${GHOST_BUILD_VERSION}
@@ -87,4 +91,5 @@ ENV LD_PRELOAD=libjemalloc.so.2
 
 EXPOSE 2368
 
+ENTRYPOINT ["/home/ghost/docker-entrypoint.sh"]
 CMD ["node", "index.js"]

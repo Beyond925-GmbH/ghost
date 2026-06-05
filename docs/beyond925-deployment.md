@@ -4,7 +4,7 @@ Self-hosted Ghost fork with **Resend bulk email**, deployed on Railway.
 
 ## Image
 
-After CI runs on branch `beyond925-resend`, Railway uses the public GHCR image:
+After CI runs on push to **`main`**, Railway uses the public GHCR image:
 
 - Moving tag: `ghcr.io/beyond925-gmbh/ghost:resend`
 - Immutable audit tag: `ghcr.io/beyond925-gmbh/ghost:sha-<commit-sha>`

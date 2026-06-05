@@ -6,7 +6,9 @@
 - [ ] GHCR package visibility is public
 - [ ] Railway Ghost service source is Docker Image `ghcr.io/beyond925-gmbh/ghost:resend`
 - [ ] Railway Image Auto Updates enabled for the `:resend` tag
-- [ ] Ghost Railway service running with MySQL + volume
+- [ ] Ghost Railway service running with MySQL + volume at `/home/ghost/content`
+- [ ] Ghost `url` matches live domain (`https://news.beyond925.de`)
+- [ ] Admin login works (incognito); transactional mail delivers if device verification enabled
 - [ ] `RESEND_API_KEY` set on Ghost service (shared variable)
 - [ ] Resend domain verified — see [resend-dns.md](./resend-dns.md)
 - [ ] HubSpot bridge deployed with `HUBSPOT_ACCESS_TOKEN`, `GHOST_ADMIN_URL`, and `GHOST_ADMIN_API_KEY`

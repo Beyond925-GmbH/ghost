@@ -1,6 +1,7 @@
 const logging = require('@tryghost/logging');
 const errors = require('@tryghost/errors');
 const debug = require('@tryghost/debug')('email-service:resend-provider-service');
+const {decodeNumericHtmlEntities} = require('../email-rendering/decode-numeric-html-entities');
 
 class ResendEmailProvider {
     #resendClient;
@@ -29,7 +30,7 @@ class ResendEmailProvider {
                 valueMap[r.id] = r.value;
             }
 
-            let html = messageBase.html;
+            let html = messageBase.html ? decodeNumericHtmlEntities(messageBase.html) : messageBase.html;
             let text = messageBase.plaintext;
 
             for (const def of replacementDefinitions) {

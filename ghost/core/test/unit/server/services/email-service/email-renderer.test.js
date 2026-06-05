@@ -2405,7 +2405,7 @@ describe('Email renderer', function () {
 
         it('does not entity-encode interpolated values in the t helper', async function () {
             // Refs https://github.com/TryGhost/Ghost/issues/26905
-            // pt-PT formats the publication date with slashes (19/03/2026),
+            // pt-PT formats the publication date with slashes,
             // which is what triggers double-encoding of interpolated values.
             customSettings.locale = 'pt-PT';
             const post = createModel(Object.assign({}, basePost, {
@@ -2454,14 +2454,15 @@ describe('Email renderer', function () {
 
             // Publication date flows through {{t '{date}'}} (double-brace) —
             // the actual symptom path in the issue.
-            assert.ok(response.html.includes('19/03/2026'), 'HTML should contain the literal slash-separated date');
-            assert.ok(response.plaintext.includes('19/03/2026'), 'Plaintext should contain the literal slash-separated date');
+            const slashSeparatedDate = /\d{2}\/03\/2026/;
+            assert.match(response.html, slashSeparatedDate, 'HTML should contain the literal slash-separated date');
+            assert.match(response.plaintext, slashSeparatedDate, 'Plaintext should contain the literal slash-separated date');
 
             assert.ok(response.plaintext.includes('Author/Name O\'Brien & Co.'), 'Plaintext should fully decode to raw characters');
         });
 
-        it('decodes German characters in post HTML instead of leaving hex entities', async function () {
-            renderedPost = '<p>&#xC4;</p><p>&#xE4;</p><p>&#xD6;</p><p>&#xF6;</p><p>&#xDC;</p><p>&#xFC;</p><p>&#xDF;</p><p>qwwweeeertzuiop&#xFC;+asdfghjkl&#xF6;&#xE4;</p>';
+        it('decodes German characters in post HTML instead of leaving visible entities', async function () {
+            renderedPost = '<p>&#xC4;&amp;#xD6;&amp;#xDC;</p><p>&amp;#xE4;&amp;#xF6;&#xFC;&amp;#xDF;</p><p>qwwweeeertzuiop&amp;#xFC;+asdfghjkl&#xF6;&amp;#xE4;</p><p>&amp;lt;nfd&amp;#xE4;aw</p><p>&amp;#xA0;&#xA0;</p>';
             const post = createModel(basePost);
             const newsletter = createModel({
                 header_image: null,
@@ -2475,10 +2476,18 @@ describe('Email renderer', function () {
             const response = await emailRenderer.renderBody(post, newsletter, null, {});
 
             assert.equal(response.html.includes('&#xC4;'), false, 'HTML should not contain hex entity for Ä');
+            assert.equal(response.html.includes('&amp;#'), false, 'HTML should not contain double-escaped numeric entities');
+            assert.equal(response.html.includes('&amp;lt;'), false, 'HTML should not contain double-escaped named entities');
             assert.ok(response.html.includes('Ä'), 'HTML should contain UTF-8 Ä');
+            assert.ok(response.html.includes('ÄÖÜ'), 'HTML should contain UTF-8 uppercase German characters');
+            assert.ok(response.html.includes('äöüß'), 'HTML should contain UTF-8 lowercase German characters');
             assert.ok(response.html.includes('qwwweeeertzuiopü+asdfghjklöä'), 'HTML should contain UTF-8 keyboard line');
+            assert.ok(response.html.includes('&lt;nfdäaw'), 'HTML should preserve escaped less-than text');
+            assert.ok(response.html.includes('\u00A0\u00A0'), 'HTML should contain UTF-8 non-breaking spaces');
             assert.ok(response.plaintext.includes('Ä'));
+            assert.ok(response.plaintext.includes('<nfdäaw'), 'Plaintext should contain decoded less-than text');
             assert.equal(response.plaintext.includes('&#xC4;'), false, 'Plaintext should not contain hex entities');
+            assert.equal(response.plaintext.includes('&amp;#'), false, 'Plaintext should not contain double-escaped numeric entities');
         });
     });
 

@@ -15,7 +15,7 @@ fi
 echo "1. Add MySQL in Railway dashboard: + New → Database → MySQL"
 echo "2. Add Ghost service as Docker Image: ghcr.io/beyond925-gmbh/ghost:resend"
 echo "3. Make the GHCR package public and enable Railway Image Auto Updates"
-echo "4. Mount volume /home/ghost/content on Ghost service"
+echo "4. Mount volume /home/ghost/content on Ghost service (auto-seeded on boot)"
 echo "5. Set variables from railway/ghost.env.example"
 echo "6. Deploy bridge from hubspot-bridge (cron: every 2h, 07:00–20:00 Europe/Berlin)"
 echo ""
