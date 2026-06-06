@@ -19,7 +19,10 @@ See [railway/README.md](../railway/README.md).
 
 Configure the Ghost service as a **Docker Image** that pulls `ghcr.io/beyond925-gmbh/ghost:resend` directly. Do not use overlay images, digest-pinned wrappers, or legacy `:resend-full` tags.
 
-HubSpot sync runs from [hubspot-bridge](https://github.com/Beyond925-GmbH/hubspot-bridge).
+HubSpot sync runs from [hubspot-bridge](https://github.com/Beyond925-GmbH/hubspot-bridge):
+
+- **Inbound (cron):** HubSpot lists → Ghost member labels
+- **Outbound (webhook):** Ghost signups → HubSpot contacts — see [hubspot-bridge README](https://github.com/Beyond925-GmbH/hubspot-bridge#ghost-signup--hubspot)
 
 ## Resend configuration
 

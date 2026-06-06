@@ -11,7 +11,25 @@
 - [ ] Admin login works (incognito); transactional mail delivers if device verification enabled
 - [ ] `RESEND_API_KEY` set on Ghost service (shared variable)
 - [ ] Resend domain verified — see [resend-dns.md](./resend-dns.md)
-- [ ] HubSpot bridge deployed with `HUBSPOT_ACCESS_TOKEN`, `GHOST_ADMIN_URL`, and `GHOST_ADMIN_API_KEY`
+- [ ] HubSpot bridge deployed with `HUBSPOT_ACCESS_TOKEN`, `GHOST_ADMIN_URL`, `GHOST_ADMIN_API_KEY`, and `GHOST_WEBHOOK_SECRET`
+- [ ] HubSpot Private App has write scopes: `crm.objects.contacts.write`, `crm.lists.write`
+- [ ] Bridge `sync-config.json` includes `signup.defaultHubspotListId`
+- [ ] Ghost `security__allowWebhookInternalIPs=true` (private mesh webhooks to `bridge`)
+- [ ] Ghost `member.added` + `member.edited` webhooks → bridge private mesh URLs
+
+## Test signup sync (Ghost → HubSpot)
+
+1. Complete a test signup on the live Ghost site (Portal or signup embed).
+2. HubSpot → Contacts: verify new contact by email.
+3. Verify contact is on the default HubSpot list (or override list if signup used a label).
+4. Ghost Admin → member has label `HS: Newsletter Subs` and note `hubspot:<contactId>`
+
+## Test label sync (Ghost ↔ HubSpot)
+
+1. Add label `Aaron's fanatisches Testsegment` to a member in Ghost Admin
+2. HubSpot → contact added to list 31
+3. Remove label in Ghost → contact removed from list 31
+4. Remove contact from HubSpot list 36 → next cron run removes `HS: Newsletter Subs` label in Ghost
 
 ## Test send (small segment)
 
