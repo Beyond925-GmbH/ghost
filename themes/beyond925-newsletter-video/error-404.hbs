@@ -1,0 +1,26 @@
+{{!< default}}
+
+<section class="archive-header">
+    <div class="shell-narrow">
+        <span class="b925-section-label">404</span>
+        <h1>Seite nicht gefunden.</h1>
+        <p class="archive-lead">Dieser Link führt nirgendwo hin — vielleicht hilft einer der aktuellen Artikel.</p>
+        <p><a class="b925-btn b925-btn--primary" href="{{@site.url}}">Zur Startseite</a></p>
+    </div>
+</section>
+
+{{#get "posts" limit="3" include="tags,authors"}}
+    {{#if posts}}
+        <section class="posts-section shell">
+            <div class="section-heading">
+                <span class="b925-section-label">Vielleicht interessant</span>
+                <h2>Aktuelle Artikel</h2>
+            </div>
+            <div class="post-grid">
+                {{#foreach posts}}
+                    {{> "post-card"}}
+                {{/foreach}}
+            </div>
+        </section>
+    {{/if}}
+{{/get}}

@@ -1,0 +1,16 @@
+{{#if isSecondary}}
+    {{#foreach navigation}}
+        <a
+            href="{{url absolute="true"}}"
+            {{#if current}}aria-current="page"{{/if}}
+        >{{label}}</a>
+    {{/foreach}}
+{{else}}
+    {{#foreach navigation}}
+        <a
+            class="nav-pill{{#if current}} is-current{{/if}}"
+            href="{{url absolute="true"}}"
+            {{#if current}}aria-current="page"{{/if}}
+        >{{label}}</a>
+    {{/foreach}}
+{{/if}}

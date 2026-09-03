@@ -1,0 +1,29 @@
+<header class="site-header">
+    <div class="shell header-bar">
+        <div class="header-shell">
+            <a class="brand" href="{{@site.url}}" aria-label="{{@site.title}} Startseite">
+                {{#if @site.logo}}
+                    <img src="{{@site.logo}}" alt="{{@site.title}}">
+                {{else}}
+                    <img
+                        class="brand-mark"
+                        src="https://media.beyond925.de/catalog/sha256/646637a9ed84156ff1d0d9860bd7686011be2289f4cfb21236cd82f21935e9ac.png"
+                        alt="Beyond925"
+                        width="150"
+                        height="33"
+                    >
+                {{/if}}
+            </a>
+            <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">
+                <span class="menu-label">Menü</span>
+                <span class="menu-icon" aria-hidden="true"></span>
+            </button>
+            <nav class="site-navigation" id="site-navigation" aria-label="Hauptnavigation">
+                {{navigation}}
+                {{#if @custom.consultation_url}}
+                    <a class="b925-btn b925-btn--primary b925-btn--sm" href="{{@custom.consultation_url}}">Gespräch buchen</a>
+                {{/if}}
+            </nav>
+        </div>
+    </div>
+</header>

@@ -1,0 +1,77 @@
+{{!< default}}
+
+<section class="home-hero home-hero--video" aria-labelledby="home-hero-heading">
+    <video
+        class="home-hero-video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        poster="{{asset "media/hero-poster.jpg"}}"
+        aria-hidden="true"
+        tabindex="-1"
+    >
+        <source src="{{asset "media/hero-background.mp4"}}" type="video/mp4">
+    </video>
+    <div class="home-hero-overlay" aria-hidden="true"></div>
+    <div class="shell home-hero-inner">
+        <div class="home-hero-copy reveal">
+            <span class="b925-section-label">
+                <span class="b925-section-label-dot" aria-hidden="true"></span>
+                Azubi-Recruiting Briefing
+            </span>
+            <h1 id="home-hero-heading">Klarheit für bessere Recruiting-Entscheidungen.</h1>
+            <p class="hero-lead">Analysen, Praxiswissen und Perspektiven für HR und Geschäftsführung — verständlich eingeordnet und direkt anwendbar.</p>
+            <div class="hero-actions">
+                <a class="b925-btn b925-btn--primary b925-btn--lg" href="#artikel">Aktuelle Artikel <span aria-hidden="true">↓</span></a>
+                {{#if @custom.consultation_url}}
+                    <a class="b925-btn b925-btn--tertiary" href="{{@custom.consultation_url}}">Beratungsgespräch buchen</a>
+                {{/if}}
+            </div>
+        </div>
+        {{#get "posts" limit="1" include="tags,authors" as |featured|}}
+            {{#foreach featured}}
+                <a class="featured-brief reveal reveal-delay-1" href="{{url}}">
+                    {{#if feature_image}}
+                        <div class="featured-brief-media">
+                            <img
+                                srcset="{{img_url feature_image size="s"}} 400w, {{img_url feature_image size="m"}} 800w"
+                                sizes="(min-width: 62rem) 22rem, 100vw"
+                                src="{{img_url feature_image size="m"}}"
+                                alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
+                                loading="eager"
+                            >
+                        </div>
+                    {{/if}}
+                    <div class="featured-brief-copy">
+                        <span class="b925-section-label">Aktuelle Analyse</span>
+                        <h2>{{title}}</h2>
+                        <div class="post-meta">
+                            {{#primary_tag}}<span>{{name}}</span>{{/primary_tag}}
+                            <span>{{reading_time minute="1 Min." minutes="% Min."}}</span>
+                        </div>
+                    </div>
+                </a>
+            {{/foreach}}
+        {{/get}}
+    </div>
+</section>
+
+<section class="posts-section shell" id="artikel">
+    <div class="section-heading reveal">
+        <span class="b925-section-label">Aktuelle Einordnungen</span>
+        <h2>Wissen, das Entscheidungen erleichtert.</h2>
+    </div>
+
+    <div class="post-grid">
+        {{#foreach posts}}
+            {{> "post-card"}}
+        {{/foreach}}
+    </div>
+    {{pagination}}
+</section>
+
+{{> "editorial-portraits"}}
+{{> "members-subscribe"}}
+{{> "consultation-band"}}

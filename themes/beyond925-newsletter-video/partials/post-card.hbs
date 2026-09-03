@@ -1,0 +1,36 @@
+<article class="post-card reveal {{post_class}}">
+    <a class="post-card-link" href="{{url}}">
+        <div class="post-card-media">
+            {{#if feature_image}}
+                <img
+                    srcset="{{img_url feature_image size="s"}} 400w, {{img_url feature_image size="m"}} 800w"
+                    sizes="(min-width: 900px) 33vw, 100vw"
+                    src="{{img_url feature_image size="m"}}"
+                    alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
+                    loading="lazy"
+                >
+            {{else}}
+                <span class="image-placeholder" aria-hidden="true"></span>
+            {{/if}}
+            {{#unless access}}
+                <span class="post-card-lock">Mitglieder</span>
+            {{/unless}}
+        </div>
+        <div class="post-card-content">
+            <div class="post-meta">
+                {{#primary_tag}}<span>{{name}}</span>{{/primary_tag}}
+                <span>{{reading_time minute="1 Min." minutes="% Min."}}</span>
+                {{#if @site.comments_enabled}}
+                    <span>{{comment_count empty="" singular="% Kommentar" plural="% Kommentare"}}</span>
+                {{/if}}
+            </div>
+            <h3>{{title}}</h3>
+            {{#if custom_excerpt}}
+                <p>{{custom_excerpt}}</p>
+            {{else}}
+                <p>{{excerpt words="24"}}</p>
+            {{/if}}
+            <span class="post-card-action">Artikel lesen <span aria-hidden="true">→</span></span>
+        </div>
+    </a>
+</article>

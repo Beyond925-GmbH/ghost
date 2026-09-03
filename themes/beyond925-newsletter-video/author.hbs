@@ -1,0 +1,32 @@
+{{!< default}}
+
+<section class="archive-header">
+    <div class="shell-narrow author-archive">
+        {{#author}}
+            {{#if profile_image}}
+                <img class="author-archive-image" src="{{img_url profile_image size="s"}}" alt="{{name}}">
+            {{/if}}
+            <div>
+                <span class="b925-section-label">Autor</span>
+                <h1>{{name}}</h1>
+                {{#if bio}}
+                    <p class="archive-lead">{{bio}}</p>
+                {{/if}}
+                <div class="author-archive-links">
+                    {{#if website}}<a href="{{website}}" target="_blank" rel="noopener">Website</a>{{/if}}
+                    {{#if facebook}}<a href="{{facebook_url}}" target="_blank" rel="noopener">Facebook</a>{{/if}}
+                    {{#if twitter}}<a href="{{twitter_url}}" target="_blank" rel="noopener">X</a>{{/if}}
+                </div>
+            </div>
+        {{/author}}
+    </div>
+</section>
+
+<section class="posts-section shell">
+    <div class="post-grid">
+        {{#foreach posts}}
+            {{> "post-card"}}
+        {{/foreach}}
+    </div>
+    {{pagination}}
+</section>

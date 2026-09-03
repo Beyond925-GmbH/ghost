@@ -1,0 +1,34 @@
+<section class="editorial-portraits shell" aria-labelledby="editorial-title">
+    <div class="section-heading reveal">
+        <span class="b925-section-label">Redaktionelle Perspektiven</span>
+        <h2 id="editorial-title">Praxiswissen aus zwei Blickwinkeln.</h2>
+    </div>
+    <div class="portrait-grid">
+        <article class="portrait-card reveal">
+            <div class="portrait-image">
+                {{#if @custom.portrait_one_image}}
+                    <img src="{{@custom.portrait_one_image}}" alt="{{@custom.portrait_one_name}}" loading="lazy">
+                {{else}}
+                    <span aria-hidden="true"></span>
+                {{/if}}
+            </div>
+            <div>
+                <h3>{{@custom.portrait_one_name}}</h3>
+                <p>{{@custom.portrait_one_role}}</p>
+            </div>
+        </article>
+        <article class="portrait-card reveal reveal-delay-1">
+            <div class="portrait-image">
+                {{#if @custom.portrait_two_image}}
+                    <img src="{{@custom.portrait_two_image}}" alt="{{@custom.portrait_two_name}}" loading="lazy">
+                {{else}}
+                    <span aria-hidden="true"></span>
+                {{/if}}
+            </div>
+            <div>
+                <h3>{{@custom.portrait_two_name}}</h3>
+                <p>{{@custom.portrait_two_role}}</p>
+            </div>
+        </article>
+    </div>
+</section>

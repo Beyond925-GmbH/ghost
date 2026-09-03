@@ -1,0 +1,49 @@
+{
+  "name": "beyond925-custom",
+  "description": "Beyond925 Ghost theme — design system with full Ghost feature support",
+  "version": "1.4.0",
+  "private": true,
+  "author": {
+    "name": "Beyond925",
+    "email": "info@beyond925.de"
+  },
+  "keywords": [
+    "ghost-theme",
+    "beyond925",
+    "newsletter"
+  ],
+  "engines": {
+    "ghost": ">=5.0.0"
+  },
+  "scripts": {
+    "test": "gscan .",
+    "zip": "bestzip ../../beyond925-newsletter-video.zip assets partials default.hbs home.hbs index.hbs page.hbs post.hbs tag.hbs author.hbs error.hbs error-404.hbs package.json"
+  },
+  "devDependencies": {
+    "bestzip": "^2.2.1",
+    "gscan": "^4.47.0"
+  },
+  "config": {
+    "posts_per_page": 9,
+    "image_sizes": {
+      "xs": { "width": 160 },
+      "s": { "width": 400 },
+      "m": { "width": 800 },
+      "l": { "width": 1200 },
+      "xl": { "width": 2000 }
+    },
+    "card_assets": true,
+    "custom": {
+      "consultation_url": {
+        "type": "text",
+        "default": "https://beyond925.de/call"
+      },
+      "portrait_one_image": {
+        "type": "image"
+      },
+      "portrait_two_image": {
+        "type": "image"
+      }
+    }
+  }
+}

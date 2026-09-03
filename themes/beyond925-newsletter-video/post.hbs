@@ -1,0 +1,84 @@
+{{!< default}}
+
+{{#post}}
+<article class="article {{post_class}}">
+    <header class="article-header">
+        <div class="article-header-aura" aria-hidden="true"></div>
+        <div class="article-header-inner shell-narrow">
+            <div class="post-meta reveal">
+                {{#primary_tag}}<a href="{{url}}">{{name}}</a>{{/primary_tag}}
+                <span>{{reading_time minute="1 Min. Lesezeit" minutes="% Min. Lesezeit"}}</span>
+                {{#if @site.comments_enabled}}
+                    <span>{{comment_count empty="" singular="% Kommentar" plural="% Kommentare"}}</span>
+                {{/if}}
+            </div>
+            <h1 class="reveal reveal-delay-1">{{title}}</h1>
+            {{#if custom_excerpt}}<p class="article-deck reveal reveal-delay-2">{{custom_excerpt}}</p>{{/if}}
+            <div class="article-byline reveal reveal-delay-2">
+                {{#foreach authors}}
+                    {{#if profile_image}}<img src="{{img_url profile_image size="xs"}}" alt="{{name}}">{{/if}}
+                    <span>
+                        <a href="{{url}}"><strong>{{name}}</strong></a>
+                        {{#if @first}}
+                            <time datetime="{{date ../published_at format="YYYY-MM-DD"}}">{{date ../published_at format="D. MMMM YYYY"}}</time>
+                        {{/if}}
+                    </span>
+                {{/foreach}}
+            </div>
+        </div>
+    </header>
+
+    {{#if feature_image}}
+        <figure class="article-feature shell-wide reveal">
+            <img
+                srcset="{{img_url feature_image size="m"}} 800w, {{img_url feature_image size="l"}} 1200w, {{img_url feature_image size="xl"}} 2000w"
+                sizes="(min-width: 1200px) 1120px, 92vw"
+                src="{{img_url feature_image size="l"}}"
+                alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
+            >
+            {{#if feature_image_caption}}<figcaption>{{feature_image_caption}}</figcaption>{{/if}}
+        </figure>
+    {{/if}}
+
+    <div class="gh-content shell-article">
+        {{content}}
+    </div>
+
+    {{#if @site.members_enabled}}
+        {{#unless @member}}
+            {{#if access}}
+                <section class="members-cta shell-narrow">
+                    <h2>Weiterlesen im Newsletter</h2>
+                    <p>Kostenlose Insights zu Azubi-Recruiting — direkt per E-Mail.</p>
+                    <a class="b925-btn b925-btn--primary" href="#/portal/signup" data-portal="signup">Kostenlos abonnieren</a>
+                </section>
+            {{/if}}
+        {{/unless}}
+    {{/if}}
+
+    {{#if comments}}
+        <section class="gh-comments shell-article" aria-label="Kommentare">
+            {{comments}}
+        </section>
+    {{/if}}
+
+    {{> "members-subscribe"}}
+    {{> "consultation-band"}}
+
+    {{#if primary_tag}}
+        {{#get "posts" filter="primary_tag:{{primary_tag.slug}}+id:-{{id}}" limit="3" include="tags,authors" as |related|}}
+            {{#if related}}
+            <section class="related-posts shell">
+                <div class="section-heading">
+                    <span class="b925-section-label">Weiterlesen</span>
+                    <h2>Weitere Einordnungen</h2>
+                </div>
+                <div class="post-grid">
+                    {{#foreach related}}{{> "post-card"}}{{/foreach}}
+                </div>
+            </section>
+            {{/if}}
+        {{/get}}
+    {{/if}}
+</article>
+{{/post}}

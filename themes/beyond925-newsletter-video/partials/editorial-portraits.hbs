@@ -1,0 +1,42 @@
+<section class="editorial-portraits shell" aria-labelledby="editorial-title">
+    <div class="section-heading reveal">
+        <span class="b925-section-label">Die Gründer</span>
+        <h2 id="editorial-title">Praxiswissen aus zwei Blickwinkeln.</h2>
+    </div>
+    <div class="portrait-grid">
+        <article class="portrait-card portrait-card--aaron reveal">
+            <div class="portrait-image">
+                {{#if @custom.portrait_one_image}}
+                    <img src="{{@custom.portrait_one_image}}" alt="Aaron Richter" loading="lazy">
+                {{else}}
+                    <img
+                        src="https://framerusercontent.com/images/SuSnCcnwwVJFo9AnMwA2S2Os1PI.jpg?scale-down-to=512&width=4000&height=4000"
+                        alt="Aaron Richter"
+                        loading="lazy"
+                    >
+                {{/if}}
+            </div>
+            <div>
+                <h3>Aaron Richter</h3>
+                <p>CPO &amp; Tech</p>
+            </div>
+        </article>
+        <article class="portrait-card portrait-card--marco reveal reveal-delay-1">
+            <div class="portrait-image">
+                {{#if @custom.portrait_two_image}}
+                    <img src="{{@custom.portrait_two_image}}" alt="Marco Grotemeyer" loading="lazy">
+                {{else}}
+                    <img
+                        src="https://framerusercontent.com/images/fCLzuE9QQ7zKLqA0ZLrarmKzo.jpg?scale-down-to=512&width=6000&height=4000"
+                        alt="Marco Grotemeyer"
+                        loading="lazy"
+                    >
+                {{/if}}
+            </div>
+            <div>
+                <h3>Marco Grotemeyer</h3>
+                <p>CEO &amp; Vision</p>
+            </div>
+        </article>
+    </div>
+</section>

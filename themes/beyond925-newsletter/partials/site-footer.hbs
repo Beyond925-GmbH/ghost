@@ -1,0 +1,26 @@
+<footer class="site-footer">
+    <div class="shell footer-sheet">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a class="brand brand-footer" href="{{@site.url}}" aria-label="{{@site.title}}">
+                    <img
+                        src="https://media.beyond925.de/catalog/sha256/646637a9ed84156ff1d0d9860bd7686011be2289f4cfb21236cd82f21935e9ac.png"
+                        alt="Beyond925"
+                        width="150"
+                        height="33"
+                    >
+                </a>
+                <p>Einordnungen für bessere Entscheidungen im Azubi-Recruiting.</p>
+            </div>
+            {{#if @site.secondary_navigation}}
+                <nav class="footer-nav" aria-label="Fußnavigation">
+                    <p class="footer-label">Links</p>
+                    {{navigation type="secondary"}}
+                </nav>
+            {{/if}}
+        </div>
+        <div class="footer-meta">
+            <span>© {{date format="YYYY"}} {{@site.title}}</span>
+        </div>
+    </div>
+</footer>

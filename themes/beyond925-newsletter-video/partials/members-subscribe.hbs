@@ -1,0 +1,32 @@
+{{#if @site.members_enabled}}
+{{#unless @member}}
+{{#unless @site.members_invite_only}}
+<section class="members-subscribe shell" aria-labelledby="members-subscribe-heading">
+    <div class="members-subscribe-inner">
+        <div>
+            <span class="b925-section-label">Newsletter</span>
+            <h2 id="members-subscribe-heading">Recruiting-Insights direkt in Ihr Postfach.</h2>
+            <p>Kurze Einordnungen für HR und Geschäftsführung — unverbindlich und kostenlos.</p>
+        </div>
+        <form class="members-form" data-members-form="subscribe">
+            <label class="sr-only" for="members-email">E-Mail-Adresse</label>
+            <div class="members-form-row">
+                <input
+                    id="members-email"
+                    name="email"
+                    type="email"
+                    required
+                    data-members-email
+                    placeholder="name@firma.de"
+                    autocomplete="email"
+                >
+                <button class="b925-btn b925-btn--primary" type="submit">Abonnieren</button>
+            </div>
+            <p class="members-form-success" data-members-success>Danke — bitte bestätigen Sie die E-Mail in Ihrem Postfach.</p>
+            <p class="members-form-error" data-members-error></p>
+        </form>
+    </div>
+</section>
+{{/unless}}
+{{/unless}}
+{{/if}}

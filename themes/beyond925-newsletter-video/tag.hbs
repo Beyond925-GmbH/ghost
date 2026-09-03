@@ -1,0 +1,22 @@
+{{!< default}}
+
+<section class="archive-header">
+    <div class="shell-narrow">
+        {{#tag}}
+            <span class="b925-section-label">Thema</span>
+            <h1>{{name}}</h1>
+            {{#if description}}
+                <p class="archive-lead">{{description}}</p>
+            {{/if}}
+        {{/tag}}
+    </div>
+</section>
+
+<section class="posts-section shell">
+    <div class="post-grid">
+        {{#foreach posts}}
+            {{> "post-card"}}
+        {{/foreach}}
+    </div>
+    {{pagination}}
+</section>
